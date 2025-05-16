@@ -1,0 +1,27 @@
+VRing Push (executado pelo processo i):
+Início:
+  j <- i;
+  State_i[i] = 0; // inicializa a si msm no vetor State como correto 
+                  // demais posiçoes sao inicializadas como -1 (desconhecido)
+  repita {
+    j <- (j+1) mod N;
+    define timeout_i(heartbeat_i);
+    send(heartbeat_i) para j;
+    UPON recv(ACK_j):
+      recebeu_ACK_j = true;
+    UPON intervalo timeout_i expira:
+      State_i[j] = 1; // marca o processo j como falho
+      se j = (i-1) mod N // se j é o anterior de i no anel
+        todos_falhos = true;
+    UPON recv(heartbeat_j):
+      atualiza State_i com os dados de State_j;
+      send(ACK_i);
+  }
+  até (recebeu_ACK_j) ou (todos_falhos);
+Fim;
+
+Modelo de sistema:
+
+- Modelo temporal: Parcialmente síncrono (??)
+
+- Modelo de falhas: Crash com Fail-Stop
