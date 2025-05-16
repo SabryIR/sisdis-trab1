@@ -15,6 +15,7 @@ Início:
         todos_falhos = true;
     UPON recv(heartbeat_j):
       atualiza State_i com os dados de State_j;
+      reset timeout_i(heartbeat_i);
       send(ACK_i);
   }
   até (recebeu_ACK_j) ou (todos_falhos);
