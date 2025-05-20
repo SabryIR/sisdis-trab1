@@ -72,8 +72,8 @@ int main (int argc, char *argv[]) {
 
     for (i = 0; i < N; i++)
         schedule(send, 10.0, i);
-    //schedule(fault, 11.0, 1);
-    //schedule(recovery, 21.0, 1);
+    schedule(fault, 11.0, 1);
+    schedule(recovery, 21.0, 1);
 
     // Agora vem o loop principal do simulador
 
@@ -87,10 +87,7 @@ int main (int argc, char *argv[]) {
                     break;
                 processo[processo[token].s].hb = token;
                 printf("O processo %d enviou um heartbeat com 10 segundos de duração para o processso %d no tempo %4.1f\n", token, processo[token].s, time());
-                if (status(processo[processo[token].s].id) != 0)
-                    schedule(timeout, 10.0, token);
-                else
-                    schedule(recv_heartbeat, 2.0, processo[token].s);
+                schedule(recv_heartbeat, 2.0, processo[token].s);
                 break;
 
             /*case test: 
@@ -144,6 +141,10 @@ int main (int argc, char *argv[]) {
                     schedule(send, 0.0, token);
                 break;
             case recv_heartbeat:
+                if (status(processo[token].id) != 0) {
+                    schedule(timeout, 8.0, processo[token].hb);
+                    break;
+                }
                 printf("O processo %d recebeu um heartbeat do processo %d no tempo %4.1f\n", token, processo[token].hb, time());
                 processo[token].State[processo[token].hb] = 0;
                 for (int j = processo[token].hb + 1; j != token; j = (j+1) % N)
