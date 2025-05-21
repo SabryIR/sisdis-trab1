@@ -1,0 +1,34 @@
+VRing Push (executado pelo processo i):
+Início:
+  j <- i;
+  State_i[i] = 0; // inicializa a si msm no vetor State como correto 
+                  // demais posiçoes sao inicializadas como -1 (desconhecido)
+  repita {
+    j <- (j+1) mod N;
+    define timeout_i(heartbeat_i);
+    send(heartbeat_i) para j;
+    UPON recv(ACK_j):
+      recebeu_ACK_j = true;
+    UPON intervalo timeout_i expira:
+      State_i[j] = 1; // marca o processo j como falho
+      se j = (i-1) mod N // se j é o anterior de i no anel
+        todos_falhos = true;
+    UPON recv(heartbeat_j):
+      atualiza State_i com os dados de State_j;
+      reset timeout_i(heartbeat_i);
+      send(ACK_i);
+  }
+  até (recebeu_ACK_j) ou (todos_falhos);
+Fim;
+
+Modelo de sistema:
+
+- Modelo temporal: Síncrono
+    Tempo entre envios de heartbeats de um mesmo processo: 10.0 unidades de tempo (heartbeat expira após 10.0 un. de tempo)
+    Tempo entre o envio de um heartbeat por um processo i e o recebimento por um processo j: 2.0 unidades de tempo
+    Tempo entre o envio de um ACK por um processo i e o recebimento por um processo j: 2.0 unidades de tempo
+    Tempo entre o recovery de um processo falho e o envio do seu primeiro heartbeat após o recovery: 1.0 unidade de tempo
+
+- Modelo de falhas: Crash-recovery
+    Um processo falho que se recupera preserva as informações internas que possuía antes de falhar sobre seu status, vetor State, o identificador do processo para qual 
+    enviou seu último heartbeat e o identificador do processo que enviou o último heartbeat recebido

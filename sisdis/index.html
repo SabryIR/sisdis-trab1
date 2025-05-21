@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+        
+        td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+        </style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" context="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css" />
+        <link rel="shortcut icon" type="imagex/png" href="">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <title>André Gauer Thomal</title>
+    </head>
+    <body>
+        <main style="padding-left: 20px; padding-top: 20px">
+            <h1>Relatório - Trabalho de Sistemas Distribuídos</h1>
+            <h5>Sabry Inacio Rafrafi- GRR20171622</h5>
+            <h5>André Gauer Thomal - GRR20203923</h5>
+
+            </br><h2>Introdução - VRing Push</h2>
+            <p>
+                Este relatório descreve uma proposta para uma adaptação do algoritmo VRing utilizando o método <i>push</i> ao invés de <i>pull</i>.
+                Serão descritos um sistema e um pseudocódigo do algoritmo, e uma simulação dele que foi feita utilizando a biblioteca SMPL será
+                disponibilizada.
+            </p>
+	    <h2>Modelo de Sistema para o VRing Push</h2>
+	        <p>
+                O algoritmo utiliza um modelo temporal síncrono. De forma periódica, cada processo envia um <i>heartbeat</i> para o processo
+                seguinte, e espera uma mensagem ACK. Caso não seja recebida, o processo deve enviar um <i>heartbeat</i> para o próximo processo,
+                repetindo a sequência até receber uma mensagem ACK. Quando um processo não recebe um <i>heartbeat</i> do anterior por mais de 10
+                unidades de tempo, esse processo anterior é marcado como suspeito. O tempo esperado entre o envio de um heartbeat e o recebimento
+                dele por outro processo é de 2 unidades de tempo, assim como o tempo entre o envio e recebimento de um ACK.
+            </p>
+            <p>
+                O modelo de falhas é em <i>crash-recovery</i>, de modo que todo processo armazena informações internas sobre o estado dos demais e
+                é capaz de reobter essas informações ao falhar e se recuperar. Caso um processo recupere, é esperado que ele volte a enviar
+                <i>heartbeats</i> em cerca de 1 unidade de tempo.
+            </p>
+        <h2>Pseudocódigo</h2>
+	    <p>Abaixo é disponibilizado um pseudocódigo do algoritmo proposto:</p>
+
+        <code><pre>VRing Push (executado pelo processo i):
+Início:
+    j <- i;
+    State_i[i] = 0; // inicializa a si msm no vetor State como correto
+                    // demais posiçoes sao inicializadas como -1 (desconhecido)
+    repita {
+        j <- (j+1) mod N;
+        define timeout_i(heartbeat_i);
+        send(heartbeat_i) para j;
+
+        UPON recv(ACK_j):
+            recebeu_ACK_j = true;
+        UPON intervalo timeout_i expira:
+            State_i[j] = 1; // marca o processo j como falho
+            se j = (i-1) mod N // se j é o anterior de i no anel
+                todos_falhos = true;
+        UPON recv(heartbeat_j):
+            atualiza State_i com os dados de State_j;
+            reset timeout_i(heartbeat_i);
+            send(ACK_i);
+    }
+    até (recebeu_ACK_j) ou (todos_falhos);
+Fim;
+        </pre></code>
+
+	    <p>Os arquivos também podem ser encontrados no GitHub por meio do seguinte link: <a href="https://github.com/SabryIR/sisdis-trab1/tree/master">https://github.com/SabryIR/sisdis-trab1/tree/master</a></p>
+	    <h2>Simulação</h2>
+	    <span>Abaixo estão algumas simulações feitas utilizando a biblioteca SMPL:</span><br/>
+        <a href="Arquivos/tempopush.c.txt">Simulação 1</a><br/>
+        <a href="Arquivos/tempopush1.c.txt">Simulação 2</a><br/>
+        <a href="Arquivos/tempopush2.c.txt">Simulação 3</a><br/>
+        <span>Abaixo estão bibliotecas auxiliares necessárias para simulações:</span><br/>
+        <a href="Arquivos/rand.c.txt">rand.c</a><br/>
+        <a href="Arquivos/smpl.c.txt">smpl.c</a><br/>
+        <a href="Arquivos/smpl.h.txt">smpl.h</a><br/>
+        <span>Abaixo está o arquivo makefile utilizado para compilar os códigos:</span><br/>
+        <a href="Arquivos/makefile.txt">makefile</a><br/><br/>
+
+	    <h5>Logs </h5>
+        <span>Abaixo estão os logs dos testes das simulações mostradas acima:</span><br/>
+	    <a href="">Log da simulação 1</a><br/>
+        <a href="">Log da simulação 2</a><br/>
+        <a href="">Log da simulação 3</a><br/><br/>
+
+        <h2>Código fonte das tarefas de aprendizado de SMPL:</h2>
+        <span>Abaixo estão os arquivos de código que resolvem as tarefas definidas pelo trabalho 0. Vale ressaltar que elas precisam das bibliotecas auxiliares acima.</span><br/>
+        <a href="Arquivos/tempo.c.txt">Tarefa 0</a><br/>
+        <a href="Arquivos/tempo1.c.txt">Tarefa 1</a><br/>
+        <a href="Arquivos/tempo2.c.txt">Tarefa 2</a><br/>
+        <a href="Arquivos/tempo3.c.txt">Tarefa 3</a><br/>
+        <a href="Arquivos/tempo4.c.txt">Tarefa 4</a><br/>
+        </main>
+    </body>
+</html>
