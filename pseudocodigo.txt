@@ -23,6 +23,12 @@ Fim;
 
 Modelo de sistema:
 
-- Modelo temporal: Parcialmente síncrono (??)
+- Modelo temporal: Síncrono
+    Tempo entre envios de heartbeats de um mesmo processo: 10.0 unidades de tempo
+    Tempo entre o envio de um heartbeat por um processo i e o recebimento por um processo j: 2.0 unidades de tempo
+    Tempo entre o envio de um ACK por um processo i e o recebimento por um processo j: 2.0 unidades de tempo
+    Tempo entre o recovery de um processo falho e o envio do seu primeiro heartbeat após o recovery: 1.0 unidade de tempo
 
-- Modelo de falhas: Crash com Fail-Stop
+- Modelo de falhas: Crash-recovery
+    Um processo falho que se recupera preserva as informações internas que possuía antes de falhar sobre seu status, vetor State, o identificador do processo para qual 
+    enviou seu último heartbeat e o identificador do processo que enviou o último heartbeat recebido
