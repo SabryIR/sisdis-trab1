@@ -49,6 +49,7 @@ int main (int argc, char *argv[]) {
         sprintf(fa_name, "%d", i);
 
         processo[i].id = facility(fa_name, 1);
+        processo[i].teste = i;
     }
 
     // Vamos escalonar (schedule) os eventos iniciais
@@ -72,12 +73,14 @@ int main (int argc, char *argv[]) {
                     if (status(processo[i].id) != 0)
                         printf("O processo %d testou o processo %d falho no tempo %4.1f\n", token, i, time());
                     else {
-                        printf("O processo %d testou o processo %d correto no tempo %4.1f\n", token, (token+1) % N, time());
+                        printf("O processo %d testou o processo %d correto no tempo %4.1f\n", token, i, time());
                         break;
                     }
                     i = (i+1) % N;
                 }
                 //printf("O processo %d testou no tempo %4.1f\n", token, time());
+                if (i == token)
+                    printf("O processo %d testou todos os processos falhos no tempo %4.1f\n", token, time());
                 schedule(test, 30.0, token);
                 break;
             case fault:
