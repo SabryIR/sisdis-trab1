@@ -62,6 +62,14 @@ int main (int argc, char *argv[]) {
 
     // Agora vem o loop principal do simulador
 
+    puts("===============================================================");
+    puts("           Sistemas DistribuÃ­dos Prof. Elias");
+    puts("          LOG do Trabalho PrÃ¡tico 0, Tarefa 1");
+    puts("      Digitar, compilar e executar o programa tempo.c");
+    printf("   Este programa foi executado para: N=%d processos.\n", N); 
+    printf("           Tempo Total de SimulaÃ§Ã£o = %d\n", MaxTempoSimulac);
+    puts("===============================================================");
+
     while(time() <= MaxTempoSimulac) {
         cause(&event, &token);
         switch(event) {
