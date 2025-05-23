@@ -56,8 +56,8 @@ int main (int argc, char *argv[]) {
 
         processo[i].id = facility(fa_name, 1);
         processo[i].State = (int *) malloc(sizeof(int)*N);
-        processo[i].s = i;
-        processo[i].hb = i;
+        processo[i].s = i; // inicializa s e hb
+        processo[i].hb = i; // com o identificador do próprio processo
 
         for (int j = 0; j < N; j++)
             if (j == i)
@@ -72,7 +72,7 @@ int main (int argc, char *argv[]) {
     // Deve-se alterar esse trecho para simular diferentes cenários:
 
     for (i = 0; i < N; i++)
-        schedule(send, 10.0, i);
+        schedule(send, 10.0, i); // no instante 10.0 todos os processos iniciam os seus primeiros testes
     schedule(fault, 11.0, 1);
     schedule(fault, 11.0, 4);
     schedule(recovery, 21.0, 1);
@@ -134,7 +134,6 @@ int main (int argc, char *argv[]) {
                 if (status(processo[processo[token].hb].id) == 0)
                     schedule(recv_ack, 2.0, processo[token].hb); // se processo[hb] está correto, prepara evento recv_ack
                 break;
-
         } // switch
     } // while
 } // tempo.c
