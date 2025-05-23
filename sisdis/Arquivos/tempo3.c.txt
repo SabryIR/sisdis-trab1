@@ -93,6 +93,8 @@ int main (int argc, char *argv[]) {
                     i = (i+1) % N;
                 }
                 //printf("O processo %d testou no tempo %4.1f\n", token, time());
+                if (i == token)
+                    printf("O processo %d testou todos os processos falhos no tempo %4.1f\n", token, time());
                 schedule(test, 30.0, token);
                 break;
             case fault:
