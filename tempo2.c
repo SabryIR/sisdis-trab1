@@ -49,7 +49,6 @@ int main (int argc, char *argv[]) {
         sprintf(fa_name, "%d", i);
 
         processo[i].id = facility(fa_name, 1);
-        processo[i].teste = i;
     }
 
     // Vamos escalonar (schedule) os eventos iniciais
