@@ -1,0 +1,50 @@
+===============================================================
+           Sistemas DistribuÃ­dos Prof. Elias
+          LOG do Trabalho PrÃ¡tico 1
+      Avaliar o algoritmo VRing Push por simulações com SMPL
+   Este programa foi executado para: N=5 processos.
+           Tempo Total de SimulaÃ§Ã£o = 100
+===============================================================
+O processo 0 enviou um heartbeat com 10 segundos de duração para o processso 1 no tempo 10.0
+O processo 1 enviou um heartbeat com 10 segundos de duração para o processso 2 no tempo 10.0
+O processo 2 enviou um heartbeat com 10 segundos de duração para o processso 3 no tempo 10.0
+O processo 3 enviou um heartbeat com 10 segundos de duração para o processso 4 no tempo 10.0
+O processo 4 enviou um heartbeat com 10 segundos de duração para o processso 0 no tempo 10.0
+O processo 1 falhou no tempo 11.0
+O processo 2 recebeu um heartbeat do processo 1 no tempo 12.0
+State[2] no tempo 12.0: -1 0 0 -1 -1 
+O processo 2 reinicializa o seu timeout no tempo 12.0
+O processo 2 envia um ACK de volta para o processo 1 no tempo 12.0
+O processo 3 recebeu um heartbeat do processo 2 no tempo 12.0
+State[3] no tempo 12.0: -1 -1 0 0 -1 
+O processo 3 reinicializa o seu timeout no tempo 12.0
+O processo 3 envia um ACK de volta para o processo 2 no tempo 12.0
+O processo 4 recebeu um heartbeat do processo 3 no tempo 12.0
+State[4] no tempo 12.0: -1 -1 -1 0 0 
+O processo 4 reinicializa o seu timeout no tempo 12.0
+O processo 4 envia um ACK de volta para o processo 3 no tempo 12.0
+O processo 0 recebeu um heartbeat do processo 4 no tempo 12.0
+State[0] no tempo 12.0: 0 -1 -1 -1 0 
+O processo 0 reinicializa o seu timeout no tempo 12.0
+O processo 0 envia um ACK de volta para o processo 4 no tempo 12.0
+O processo 2 recebeu um ACK do processo 3 no tempo 14.0
+O processo 3 recebeu um ACK do processo 4 no tempo 14.0
+O processo 4 recebeu um ACK do processo 0 no tempo 14.0
+O heartbeat do processo 0 enviado para o processo 1 expirou no tempo 20.0
+State[0] no tempo 20.0: 0 1 -1 -1 0 
+O processo 0 enviou um heartbeat com 10 segundos de duração para o processso 2 no tempo 20.0
+O processo 1 recuperou no tempo 21.0
+O processo 2 recebeu um heartbeat do processo 0 no tempo 22.0
+State[2] no tempo 22.0: 0 1 0 -1 -1 
+O processo 2 reinicializa o seu timeout no tempo 22.0
+O processo 2 envia um ACK de volta para o processo 0 no tempo 22.0
+O processo 1 enviou um heartbeat com 10 segundos de duração para o processso 3 no tempo 22.0
+O processo 0 recebeu um ACK do processo 2 no tempo 24.0
+O processo 3 recebeu um heartbeat do processo 1 no tempo 24.0
+State[3] no tempo 24.0: -1 0 -1 0 -1 
+O processo 3 reinicializa o seu timeout no tempo 24.0
+O processo 3 envia um ACK de volta para o processo 1 no tempo 24.0
+O processo 1 recebeu um ACK do processo 3 no tempo 26.0
+
+**** Simulation Error at Time 26.000
+     Empty Event List

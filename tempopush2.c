@@ -113,6 +113,7 @@ int main (int argc, char *argv[]) {
                 printf("O processo %d recebeu um ACK do processo %d no tempo %4.1f\n", token, processo[token].s, time()); // ACK foi recebido
                 break;
             case timeout:
+                if (status(processo[token].id) != 0) break;
                 printf("O heartbeat do processo %d enviado para o processo %d expirou no tempo %4.1f\n", token, processo[token].s, time());
                 processo[token].State[processo[token].s] = 1;
                 printf("State[%d] no tempo %4.1f: ", token, time());
