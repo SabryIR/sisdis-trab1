@@ -36,7 +36,7 @@ int main (int argc, char *argv[]) {
     static char fa_name[5];
 
     if (argc != 2) {
-        puts("Uso correto: tempo <número de processos>");
+        puts("Uso correto: tempopush <número de processos>");
         exit(1);
     }
     
@@ -61,14 +61,15 @@ int main (int argc, char *argv[]) {
 
         for (int j = 0; j < N; j++)
             if (j == i)
-                processo[i].State[j] = 0;
+                processo[i].State[j] = 0; // inicializa a si mesmo como correto em State
             else
-                processo[i].State[j] = -1;
+                processo[i].State[j] = -1; // inicializa os demais como estado desconhecido
     }
 
     // Vamos escalonar (schedule) os eventos iniciais
-    // testes: todos os processos executam em intervalos de testes de 30 unidades de tempo
-    // A simulação começa no tempo 0 (zero) e os primeiros testes são escalonados para o tempo 30.0
+    // testes: todos os processos executam em intervalos de testes de 10 unidades de tempo
+    // A simulação começa no tempo 0 (zero) e os primeiros testes são escalonados para o tempo 10.0
+    // Deve-se alterar esse trecho para simular diferentes cenários:
 
     for (i = 0; i < N; i++)
         schedule(send, 10.0, i);
@@ -86,80 +87,52 @@ int main (int argc, char *argv[]) {
                 if (status(processo[token].id) != 0) break; // se o próprio processo estiver falho, não testa!
                 processo[token].s = (processo[token].s + 1) % N;
                 if (token == processo[token].s)
-                    break;
+                    break; // processo[token] não envia heartbeat para si mesmo
                 processo[processo[token].s].hb = token;
                 printf("O processo %d enviou um heartbeat com 10 segundos de duração para o processso %d no tempo %4.1f\n", token, processo[token].s, time());
                 schedule(recv_heartbeat, 2.0, processo[token].s);
                 break;
-
-            /*case test: 
-                if (status(processo[token].id) != 0) break; // se o próprio processo estiver falho, não testa!
-                i = (token+1) % N;
-                while (i != token) {
-                    printf("State[%d] no tempo %4.1f: ", token, time());
-                    if (status(processo[i].id) != 0) { // processo falho
-                        processo[token].State[i] = 1;
-                        for (int j = 0; j < N; j++)
-                            printf("%d ", processo[token].State[j]);
-                        printf("\n");
-                    }
-                    else { // processo correto
-                        processo[token].State[i] = 0;
-                        for (int j = i+1; j != token; j = (j+1) % N)
-                            processo[token].State[j] = processo[i].State[j];
-                        for (int j = 0; j < N; j++)
-                            printf("%d ", processo[token].State[j]);
-                        printf("\n");
-                        break;
-                    }
-                    i = (i+1) % N;
-                }
-                //printf("O processo %d testou no tempo %4.1f\n", token, time());
-                schedule(test, 30.0, token);
-                break;*/
-
             case fault:
-                r = request(processo[token].id, token, 0);
+                r = request(processo[token].id, token, 0); // simula falha do processo[token]
                 printf("O processo %d falhou no tempo %4.1f\n", token, time());
                 break;
             case recovery:
-                release(processo[token].id, token);
+                release(processo[token].id, token); // simula recovery do processo[token]
                 printf("O processo %d recuperou no tempo %4.1f\n", token, time());
                 schedule(send, 1.0, token);
                 break;
             case recv_ack:
-                printf("O processo %d recebeu um ACK do processo %d no tempo %4.1f\n", token, processo[token].s, time());
+                printf("O processo %d recebeu um ACK do processo %d no tempo %4.1f\n", token, processo[token].s, time()); // ACK foi recebido
                 break;
             case timeout:
                 printf("O heartbeat do processo %d enviado para o processo %d expirou no tempo %4.1f\n", token, processo[token].s, time());
                 processo[token].State[processo[token].s] = 1;
                 printf("State[%d] no tempo %4.1f: ", token, time());
                 for (int i = 0; i < N; i++)
-                    printf("%d ", processo[token].State[i]);
+                    printf("%d ", processo[token].State[i]); // imprime State[token] após identificar processo[s] como falho
                 printf("\n");
                 if (processo[token].s == (token-1) % N)
-                    printf("O processo %d testou todos os outros processos falhos no tempo %4.1f\n", token, time());
+                    printf("O processo %d testou todos os outros processos falhos no tempo %4.1f\n", token, time()); // se o processo anterior a token no anel falhou, então todos falharam
                 else
-                    schedule(send, 0.0, token);
+                    schedule(send, 0.0, token); // caso ainda haja mais processos a testar, prepara o próximo evento send
                 break;
             case recv_heartbeat:
                 if (status(processo[token].id) != 0) {
-                    schedule(timeout, 8.0, processo[token].hb);
+                    schedule(timeout, 8.0, processo[token].hb); // em caso de processo[token] estar falho, prepara o evento timeout
                     break;
                 }
                 printf("O processo %d recebeu um heartbeat do processo %d no tempo %4.1f\n", token, processo[token].hb, time());
                 processo[token].State[processo[token].hb] = 0;
                 for (int j = (processo[token].hb + 1) % N; j != token; j = (j+1) % N)
-                    processo[token].State[j] = processo[processo[token].hb].State[j];
-                    
+                    processo[token].State[j] = processo[processo[token].hb].State[j]; // ao saber que processo[hb] está correto, atualiza State[token] com State[hb]
                 printf("State[%d] no tempo %4.1f: ", token, time());
                 for (int j = 0; j < N; j++)
-                    printf("%d ", processo[token].State[j]);
+                    printf("%d ", processo[token].State[j]); // imprime State[token] atualizado
                 printf("\n");
                 printf("O processo %d reinicializa o seu timeout no tempo %4.1f\n", token, time());
                 printf("O processo %d envia um ACK de volta para o processo %d no tempo %4.1f\n", token, processo[token].hb, time());
                 if (status(processo[processo[token].hb].id) == 0)
-                    schedule(recv_ack, 2.0, processo[token].hb);
+                    schedule(recv_ack, 2.0, processo[token].hb); // se processo[hb] está correto, prepara evento recv_ack
                 break;
 
         } // switch
